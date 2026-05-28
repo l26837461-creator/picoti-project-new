@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* Gingham palette */
+  --gingham-blue-base: #c8dff0;
+  --gingham-blue-check: #a8cce8;
+  --gingham-yellow-base: #f5e8b8;
+  --gingham-yellow-check: #edd98a;
+  --gingham-size: 18px;
+
+  /* Brand accents (design system) */
+  --petity-sky: #a3d9ff;
+  --petity-blue: #4a90c4;
+  --petity-yellow-bright: #fff15e;
+  --petity-yellow-soft: #ffed86;
+  --petity-yellow: #fff15e;
+  --petity-cream: #f5f0e6;
+
+  /* App shell */
+  --app-shell-bg: #a3d9ff;
+  --phone-width: 375px;
+  --phone-height: 812px;
+  --phone-radius: 2.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-source-han-sans), "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+body {
+  background: var(--app-shell-bg);
+  color: var(--foreground);
+  font-family: var(--font-source-han-sans), "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Desktop preview: centered phone frame on light blue canvas */
+.app-viewport {
+  display: flex;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  background-color: var(--app-shell-bg);
+}
+
+.phone-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--phone-width);
+  height: min(var(--phone-height), calc(100dvh - 3rem));
+  min-height: 640px;
+  overflow: hidden;
+  border-radius: var(--phone-radius);
+  background-color: #a3d9ff;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.5) inset,
+    0 0 0 1px rgb(0 0 0 / 0.06),
+    0 24px 48px -12px rgb(42 92 130 / 0.35),
+    0 12px 24px -8px rgb(42 92 130 / 0.2);
+}
+
+.phone-frame::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 20;
+  width: 120px;
+  height: 28px;
+  transform: translateX(-50%);
+  border-radius: 0 0 1rem 1rem;
+  background: rgb(0 0 0 / 0.08);
+  pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  .app-viewport {
+    padding: 0;
+  }
+
+  .phone-frame {
+    max-width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .phone-frame::before {
+    display: none;
+  }
+}
+
+/* Gingham checkered background */
+.gingham-blue {
+  background-color: var(--gingham-blue-base);
+  background-image:
+    linear-gradient(
+      45deg,
+      var(--gingham-blue-check) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--gingham-blue-check) 75%
+    ),
+    linear-gradient(
+      45deg,
+      var(--gingham-blue-check) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--gingham-blue-check) 75%
+    );
+  background-size: var(--gingham-size) var(--gingham-size);
+  background-position:
+    0 0,
+    calc(var(--gingham-size) / 2) calc(var(--gingham-size) / 2);
+}
+
+.gingham-yellow {
+  background-color: var(--gingham-yellow-base);
+  background-image:
+    linear-gradient(
+      45deg,
+      var(--gingham-yellow-check) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--gingham-yellow-check) 75%
+    ),
+    linear-gradient(
+      45deg,
+      var(--gingham-yellow-check) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--gingham-yellow-check) 75%
+    );
+  background-size: var(--gingham-size) var(--gingham-size);
+  background-position:
+    0 0,
+    calc(var(--gingham-size) / 2) calc(var(--gingham-size) / 2);
+}
+
+.welcome-screen {
+  overflow: hidden;
+}
+
+.picati-logo__text {
+  font-family: "Fredoka", "Arial Rounded MT Bold", sans-serif;
+}
