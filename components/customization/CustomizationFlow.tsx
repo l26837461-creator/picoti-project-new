@@ -1,6 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import {
+  INITIAL_CUSTOMIZATION,
+  submitCustomization,
+  type CustomizationFormData,
+  type ProductType,
+} from "@/lib/customization";
 import { GinghamBackground } from "./GinghamBackground";
 import { STEP_BACKGROUND, STEP_COUNT, type StepIndex } from "./types";
 import { ConfirmStep } from "./steps/ConfirmStep";
@@ -11,6 +17,18 @@ import { WelcomeStep } from "./steps/WelcomeStep";
 
 export function CustomizationFlow() {
   const [currentStep, setCurrentStep] = useState<StepIndex>(0);
+  const [formData, setFormData] =
+    useState<CustomizationFormData>(INITIAL_CUSTOMIZATION);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const updateFormData = useCallback(
+    (patch: Partial<CustomizationFormData>) => {
+      setFormData((prev) => ({ ...prev, ...patch }));
+    },
+    [],
+  );
 
   const goNext = useCallback(() => {
     setCurrentStep((prev) => {
@@ -26,10 +44,21 @@ export function CustomizationFlow() {
     });
   }, []);
 
-  const handleSubmit = useCallback(() => {
-    // Placeholder: submission logic will be implemented later
-    console.log("Submit customization");
-  }, []);
+  const handleSubmit = useCallback(async () => {
+    setSubmitError(null);
+    setIsSubmitting(true);
+
+    try {
+      await submitCustomization(formData);
+      setSubmitSuccess(true);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "提交失败，请稍后重试";
+      setSubmitError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [formData]);
 
   const backgroundVariant = STEP_BACKGROUND[currentStep];
 
@@ -37,19 +66,41 @@ export function CustomizationFlow() {
     <div className="flex h-full min-h-0 flex-1 flex-col">
       <GinghamBackground variant={backgroundVariant}>
         <StepContainer step={currentStep}>
-        {currentStep === 0 && <WelcomeStep onStart={goNext} />}
-        {currentStep === 1 && (
-          <ProductTypeStep onNext={goNext} />
-        )}
-        {currentStep === 2 && (
-          <UploadStep onPrevious={goPrevious} onNext={goNext} />
-        )}
-        {currentStep === 3 && (
-          <InfoStep onPrevious={goPrevious} onNext={goNext} />
-        )}
-        {currentStep === 4 && (
-          <ConfirmStep onPrevious={goPrevious} onSubmit={handleSubmit} />
-        )}
+          {currentStep === 0 && <WelcomeStep onStart={goNext} />}
+          {currentStep === 1 && (
+            <ProductTypeStep
+              productType={formData.productType}
+              onProductTypeChange={(productType: ProductType) =>
+                updateFormData({ productType })
+              }
+              onNext={goNext}
+            />
+          )}
+          {currentStep === 2 && (
+            <UploadStep
+              photos={formData.photos}
+              onPhotosChange={(photos) => updateFormData({ photos })}
+              onPrevious={goPrevious}
+              onNext={goNext}
+            />
+          )}
+          {currentStep === 3 && (
+            <InfoStep
+              formData={formData}
+              onFormDataChange={updateFormData}
+              onPrevious={goPrevious}
+              onNext={goNext}
+            />
+          )}
+          {currentStep === 4 && (
+            <ConfirmStep
+              onPrevious={goPrevious}
+              onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+              submitError={submitError}
+              submitSuccess={submitSuccess}
+            />
+          )}
         </StepContainer>
       </GinghamBackground>
     </div>

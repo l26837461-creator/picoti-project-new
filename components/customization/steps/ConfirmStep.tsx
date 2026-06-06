@@ -3,6 +3,9 @@
 type ConfirmStepProps = {
   onPrevious: () => void;
   onSubmit: () => void;
+  isSubmitting: boolean;
+  submitError: string | null;
+  submitSuccess: boolean;
 };
 
 const sx = (value: number) => `${(value / 393) * 100}%`;
@@ -25,7 +28,13 @@ const TERMS = [
 /**
  * Step 5 — confirm submission
  */
-export function ConfirmStep({ onPrevious, onSubmit }: ConfirmStepProps) {
+export function ConfirmStep({
+  onPrevious,
+  onSubmit,
+  isSubmitting,
+  submitError,
+  submitSuccess,
+}: ConfirmStepProps) {
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div className="absolute inset-0 z-0" aria-hidden>
@@ -91,12 +100,31 @@ export function ConfirmStep({ onPrevious, onSubmit }: ConfirmStepProps) {
             ))}
           </ol>
         </div>
+
+        {submitSuccess ? (
+          <p
+            className="mt-4 text-center text-[13px] font-medium text-[#16A34A]"
+            role="status"
+          >
+            提交成功！我们会尽快为您制作。
+          </p>
+        ) : null}
+
+        {submitError ? (
+          <p
+            className="mt-4 text-center text-[13px] text-[#EF4444]"
+            role="alert"
+          >
+            {submitError}
+          </p>
+        ) : null}
       </div>
 
       <button
         type="button"
         aria-label="上一步"
         onClick={onPrevious}
+        disabled={isSubmitting}
         className="absolute z-10 flex items-center justify-center rounded-full border-2 border-[#81D5FA] bg-white text-[15px] font-medium text-[#81D5FA] shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99]"
         style={{
           left: "11.70%",
@@ -112,7 +140,8 @@ export function ConfirmStep({ onPrevious, onSubmit }: ConfirmStepProps) {
         type="button"
         aria-label="确定提交"
         onClick={onSubmit}
-        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99]"
+        disabled={isSubmitting || submitSuccess}
+        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
         style={{
           left: "53.69%",
           right: "11.45%",
@@ -121,7 +150,7 @@ export function ConfirmStep({ onPrevious, onSubmit }: ConfirmStepProps) {
           fontFamily: SOURCE_HAN,
         }}
       >
-        确定提交
+        {isSubmitting ? "提交中…" : submitSuccess ? "已提交" : "确定提交"}
       </button>
 
       <p

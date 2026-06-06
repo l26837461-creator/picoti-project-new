@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 
 type UploadStepProps = {
+  photos: File[];
+  onPhotosChange: (photos: File[]) => void;
   onPrevious: () => void;
   onNext: () => void;
 };
@@ -85,14 +87,22 @@ function UploadIcon() {
  * 第 3 页 — 上传宠物照片
  * 布局对齐第二页；底图 PNG 缺失时用 GinghamBackground yellow 兜底
  */
-export function UploadStep({ onPrevious, onNext }: UploadStepProps) {
+export function UploadStep({
+  photos,
+  onPhotosChange,
+  onPrevious,
+  onNext,
+}: UploadStepProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [photoCount, setPhotoCount] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const photoCount = photos.length;
 
   const handleFiles = (files: FileList | null) => {
-    if (!files) return;
-    setPhotoCount((prev) => Math.min(MAX_PHOTOS, prev + files.length));
+    if (!files?.length) return;
+    const incoming = Array.from(files).filter((file) =>
+      file.type.startsWith("image/"),
+    );
+    onPhotosChange([...photos, ...incoming].slice(0, MAX_PHOTOS));
   };
 
   const openFilePicker = () => inputRef.current?.click();

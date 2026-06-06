@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type CSSProperties } from "react";
-
-type ProductType = "pet" | "owner";
+import type { CSSProperties } from "react";
+import type { ProductType } from "@/lib/customization";
 
 type ProductTypeStepProps = {
+  productType: ProductType;
+  onProductTypeChange: (productType: ProductType) => void;
   onNext: () => void;
 };
 
@@ -70,8 +71,11 @@ function OptionCard({ selected, title, subtitle, onSelect, style }: OptionCardPr
  * 第 2 页 — 选择定制卡片类型
  * 图2 合成底图(格纹+黄纸+白卡) → 图7 页头 → HTML 标题/选项 → 图6 按钮
  */
-export function ProductTypeStep({ onNext }: ProductTypeStepProps) {
-  const [selected, setSelected] = useState<ProductType>("pet");
+export function ProductTypeStep({
+  productType,
+  onProductTypeChange,
+  onNext,
+}: ProductTypeStepProps) {
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -114,10 +118,10 @@ export function ProductTypeStep({ onNext }: ProductTypeStepProps) {
 
       {/* 图8：可交互选项（Figma Component 1 / 2） */}
       <OptionCard
-        selected={selected === "pet"}
+        selected={productType === "pet"}
         title="宠物佩戴"
         subtitle="为宠物设计的定制产品"
-        onSelect={() => setSelected("pet")}
+        onSelect={() => onProductTypeChange("pet")}
         style={{
           ...OPTION_BOX_STYLE,
           top: "44.37%",
@@ -125,10 +129,10 @@ export function ProductTypeStep({ onNext }: ProductTypeStepProps) {
         }}
       />
       <OptionCard
-        selected={selected === "owner"}
+        selected={productType === "owner"}
         title="主人饰品"
         subtitle="主人随身携带精致配饰"
-        onSelect={() => setSelected("owner")}
+        onSelect={() => onProductTypeChange("owner")}
         style={{
           ...OPTION_BOX_STYLE,
           top: "55.05%",

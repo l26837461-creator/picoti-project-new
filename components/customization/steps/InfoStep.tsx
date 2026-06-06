@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import type { CustomizationFormData, Gender } from "@/lib/customization";
 
 type InfoStepProps = {
+  formData: CustomizationFormData;
+  onFormDataChange: (patch: Partial<CustomizationFormData>) => void;
   onPrevious: () => void;
   onNext: () => void;
 };
-
-type Gender = "male" | "female";
 
 const sx = (value: number) => `${(value / 393) * 100}%`;
 const sy = (value: number) => `${(value / 852) * 100}%`;
@@ -45,9 +46,12 @@ function Field({ label, children }: FieldProps) {
  * Step 4 — fill in pet info
  * layer1 bg -> layer2 header -> HTML form -> CSS buttons
  */
-export function InfoStep({ onPrevious, onNext }: InfoStepProps) {
-  const [gender, setGender] = useState<Gender | null>(null);
-
+export function InfoStep({
+  formData,
+  onFormDataChange,
+  onPrevious,
+  onNext,
+}: InfoStepProps) {
   return (
     <div className="absolute inset-0 overflow-hidden">
       {/* layer 1: composite bg */}
@@ -102,6 +106,10 @@ export function InfoStep({ onPrevious, onNext }: InfoStepProps) {
               placeholder="请输入宠物的名字"
               className={inputClass}
               style={{ color: TEXT_PRIMARY }}
+              value={formData.petName}
+              onChange={(event) =>
+                onFormDataChange({ petName: event.target.value })
+              }
             />
           </Field>
 
@@ -116,26 +124,27 @@ export function InfoStep({ onPrevious, onNext }: InfoStepProps) {
                 <button
                   key={value}
                   type="button"
-                  aria-pressed={gender === value}
-                  onClick={() => setGender(value)}
+                  aria-pressed={formData.gender === value}
+                  onClick={() => onFormDataChange({ gender: value as Gender })}
                   className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-[13px] transition-colors ${
-                    gender === value
+                    formData.gender === value
                       ? "border-[#4A90C4] bg-[#F0FAFF]"
                       : "border-[#81D5FA] bg-[#FFFEF8]"
                   }`}
                   style={{
-                    color: gender === value ? TEXT_PRIMARY : TEXT_SECONDARY,
+                    color:
+                      formData.gender === value ? TEXT_PRIMARY : TEXT_SECONDARY,
                   }}
                 >
                   <span
                     className={`flex h-[16px] w-[16px] items-center justify-center rounded-full border ${
-                      gender === value
+                      formData.gender === value
                         ? "border-[#4A90C4] bg-[#4A90C4]"
                         : "border-[#81D5FA] bg-white"
                     }`}
                     aria-hidden
                   >
-                    {gender === value ? (
+                    {formData.gender === value ? (
                       <span className="h-[6px] w-[6px] rounded-full bg-white" />
                     ) : null}
                   </span>
@@ -151,6 +160,10 @@ export function InfoStep({ onPrevious, onNext }: InfoStepProps) {
               placeholder="年/月/日"
               className={inputClass}
               style={{ color: TEXT_PRIMARY }}
+              value={formData.birthday}
+              onChange={(event) =>
+                onFormDataChange({ birthday: event.target.value })
+              }
             />
           </Field>
 
@@ -160,6 +173,10 @@ export function InfoStep({ onPrevious, onNext }: InfoStepProps) {
               placeholder="请输入主人电话"
               className={inputClass}
               style={{ color: TEXT_PRIMARY }}
+              value={formData.ownerPhone}
+              onChange={(event) =>
+                onFormDataChange({ ownerPhone: event.target.value })
+              }
             />
           </Field>
 
@@ -169,6 +186,10 @@ export function InfoStep({ onPrevious, onNext }: InfoStepProps) {
               placeholder="请输入主人的名字"
               className={inputClass}
               style={{ color: TEXT_PRIMARY }}
+              value={formData.ownerName}
+              onChange={(event) =>
+                onFormDataChange({ ownerName: event.target.value })
+              }
             />
           </Field>
         </div>
