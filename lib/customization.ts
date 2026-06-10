@@ -4,7 +4,7 @@ export type ProductType = "pet" | "owner";
 export type Gender = "male" | "female";
 
 export type CustomizationFormData = {
-  productType: ProductType;
+  productType: ProductType | null;
   photos: File[];
   petName: string;
   gender: Gender | null;
@@ -14,7 +14,7 @@ export type CustomizationFormData = {
 };
 
 export const INITIAL_CUSTOMIZATION: CustomizationFormData = {
-  productType: "pet",
+  productType: null,
   photos: [],
   petName: "",
   gender: null,
@@ -23,11 +23,38 @@ export const INITIAL_CUSTOMIZATION: CustomizationFormData = {
   ownerName: "",
 };
 
+export function isInfoComplete(
+  data: Pick<
+    CustomizationFormData,
+    "petName" | "gender" | "birthday" | "ownerPhone" | "ownerName"
+  >,
+): boolean {
+  return (
+    data.petName.trim() !== "" &&
+    data.gender !== null &&
+    data.birthday.trim() !== "" &&
+    data.ownerPhone.trim() !== "" &&
+    data.ownerName.trim() !== ""
+  );
+}
+
 const STORAGE_BUCKET = "pet-photos";
 
 export async function submitCustomization(
   data: CustomizationFormData,
 ): Promise<string> {
+  if (!data.productType) {
+    throw new Error("请选择定制卡片类型");
+  }
+
+  if (data.photos.length < 5) {
+    throw new Error("请至少上传5张宠物照片");
+  }
+
+  if (!isInfoComplete(data)) {
+    throw new Error("请填写完整的宠物及主人信息");
+  }
+
   const orderId = crypto.randomUUID();
   const photoUrls: string[] = [];
 

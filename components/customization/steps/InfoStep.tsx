@@ -1,7 +1,11 @@
 "use client";
 
 import type { ReactNode } from "react";
-import type { CustomizationFormData, Gender } from "@/lib/customization";
+import {
+  isInfoComplete,
+  type CustomizationFormData,
+  type Gender,
+} from "@/lib/customization";
 
 type InfoStepProps = {
   formData: CustomizationFormData;
@@ -52,6 +56,8 @@ export function InfoStep({
   onPrevious,
   onNext,
 }: InfoStepProps) {
+  const canProceed = isInfoComplete(formData);
+
   return (
     <div className="absolute inset-0 overflow-hidden">
       {/* layer 1: composite bg */}
@@ -214,7 +220,9 @@ export function InfoStep({
         type="button"
         aria-label="下一步"
         onClick={onNext}
-        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99]"
+        disabled={!canProceed}
+        aria-disabled={!canProceed}
+        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           left: "53.69%",
           right: "11.45%",

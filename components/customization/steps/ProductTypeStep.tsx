@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import type { ProductType } from "@/lib/customization";
 
 type ProductTypeStepProps = {
-  productType: ProductType;
+  productType: ProductType | null;
   onProductTypeChange: (productType: ProductType) => void;
   onNext: () => void;
 };
@@ -76,6 +76,7 @@ export function ProductTypeStep({
   onProductTypeChange,
   onNext,
 }: ProductTypeStepProps) {
+  const canProceed = productType !== null;
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -153,8 +154,10 @@ export function ProductTypeStep({
       <button
         type="button"
         onClick={onNext}
+        disabled={!canProceed}
         aria-label="下一步"
-        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99]"
+        aria-disabled={!canProceed}
+        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           left: sx(73),
           right: sx(73),

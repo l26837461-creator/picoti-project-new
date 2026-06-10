@@ -10,6 +10,7 @@ type UploadStepProps = {
 };
 
 const MAX_PHOTOS = 8;
+const MIN_PHOTOS = 5;
 
 /** 393×852 设计稿 → 百分比定位 */
 const sx = (value: number) => `${(value / 393) * 100}%`;
@@ -96,6 +97,7 @@ export function UploadStep({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const photoCount = photos.length;
+  const canProceed = photoCount >= MIN_PHOTOS;
 
   const handleFiles = (files: FileList | null) => {
     if (!files?.length) return;
@@ -268,7 +270,9 @@ export function UploadStep({
         type="button"
         aria-label="下一步"
         onClick={onNext}
-        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99]"
+        disabled={!canProceed}
+        aria-disabled={!canProceed}
+        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           left: "53.69%",
           right: "11.45%",

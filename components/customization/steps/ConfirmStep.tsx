@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { KnownDetailsAcknowledge } from "../ui/KnownDetailsAcknowledge";
+
 type ConfirmStepProps = {
   onPrevious: () => void;
   onSubmit: () => void;
@@ -35,6 +38,9 @@ export function ConfirmStep({
   submitError,
   submitSuccess,
 }: ConfirmStepProps) {
+  const [termsAcknowledged, setTermsAcknowledged] = useState(false);
+  const canSubmit = termsAcknowledged && !isSubmitting && !submitSuccess;
+
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div className="absolute inset-0 z-0" aria-hidden>
@@ -101,6 +107,12 @@ export function ConfirmStep({
           </ol>
         </div>
 
+        <KnownDetailsAcknowledge
+          checked={termsAcknowledged}
+          onChange={setTermsAcknowledged}
+          disabled={isSubmitting || submitSuccess}
+        />
+
         {submitSuccess ? (
           <p
             className="mt-4 text-center text-[13px] font-medium text-[#16A34A]"
@@ -140,8 +152,9 @@ export function ConfirmStep({
         type="button"
         aria-label="确定提交"
         onClick={onSubmit}
-        disabled={isSubmitting || submitSuccess}
-        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+        disabled={!canSubmit}
+        aria-disabled={!canSubmit}
+        className="absolute z-10 flex items-center justify-center rounded-full bg-[#81D5FA] text-[15px] font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           left: "53.69%",
           right: "11.45%",
